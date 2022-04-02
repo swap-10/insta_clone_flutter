@@ -39,7 +39,8 @@ dependencies:
   firebase_auth: ^3.3.11
   firebase_storage: ^10.2.9
   flutter_dotenv: ^5.0.2
-
+  flutter_svg: ^1.0.3
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -95,3 +96,6 @@ flutter:
   
   assets:
     - .env
+    - assets/Instagram_logo_written.svg
+    - assets/instagram_logo.png
+    - assets/car_test.png
