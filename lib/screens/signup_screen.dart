@@ -99,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 onPressed: (() => {}),
                 child: Container(
                   child: const Text(
-                    "Log in",
+                    "SignUp",
                     style: TextStyle(color: Colors.white),
                   ),
                   width: double.infinity,
@@ -121,7 +121,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    child: const Text("Don't have an account?"),
+                    child: const Text("Have an account already?"),
                     padding: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 1.0),
                   ),
@@ -129,7 +129,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     onTap: () {},
                     child: Container(
                       child: const Text(
-                        "Sign Up",
+                        "Login instead",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,
