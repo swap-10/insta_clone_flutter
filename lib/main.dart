@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_clone_flutter/responsiveness/mobile_screen_layout.dart';
 import 'package:insta_clone_flutter/responsiveness/web_screen_layout.dart';
+import 'package:insta_clone_flutter/screens/signup_screen.dart';
 import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/responsiveness/responsive_screen_layout.dart';
 import 'screens/login_screen.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
       //   mobileScreenLayout: MobileScreenLayout(),
       //   webScreenLayout: WebScreenLayout(),
       // ),
-      home: const LoginScreen(),
+      home: const SignupScreen(),
     );
   }
 }

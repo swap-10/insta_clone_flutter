@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String hintText;
+  final String? errorText;
   final TextInputType keyboardType;
   final bool obscureText;
   final bool enableSuggestions;
@@ -12,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     required this.textEditingController,
     required this.hintText,
     required this.keyboardType,
+    this.errorText,
     this.obscureText = false,
     this.enableSuggestions = true,
     this.autocorrect = true,
@@ -27,6 +29,7 @@ class CustomTextField extends StatelessWidget {
       controller: textEditingController,
       decoration: InputDecoration(
         hintText: hintText,
+        errorText: errorText,
         border: inputBorder,
         focusedBorder: inputBorder,
         enabledBorder: inputBorder,
