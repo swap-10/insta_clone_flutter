@@ -32,21 +32,21 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 32.0,
-              ),
+              Flexible(child: Container(), flex: 1),
               Image.asset(
                 'assets/instagram_logo.png',
                 height: 48.0,
               ),
-              const SizedBox(height: 48.0),
+              const SizedBox(
+                height: 24.0,
+              ),
               SvgPicture.asset(
                 'assets/Instagram_logo_written.svg',
                 color: primaryColor,
                 height: 48.0,
               ),
               const SizedBox(
-                height: 32.0,
+                height: 24.0,
               ),
               CustomTextField(
                 textEditingController: _emailAddressController,
@@ -88,6 +88,34 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+              Flexible(
+                child: Container(),
+                flex: 2,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: const Text("Don't have an account?"),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 1.0),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 1.0),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
