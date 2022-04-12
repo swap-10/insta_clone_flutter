@@ -98,3 +98,4 @@ flutter:
     - .env
     - assets/Instagram_logo_written.svg
     - assets/instagram_logo.png
+    - assets/usericon.png
