@@ -29,6 +29,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final String _errorText = "Password doesn't match";
   String? _passedErrorText;
   bool _passwordMatches = false;
+  bool _isLoading = false;
 
   Uint8List? _image;
 
@@ -49,6 +50,9 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
     String res = await AuthMethods().signUpUser(
       email: _emailAddressController.text,
       username: _usernameController.text,
@@ -56,7 +60,9 @@ class _SignupScreenState extends State<SignupScreen> {
       file: _image!,
     );
     // print(res);
-
+    setState(() {
+      _isLoading = false;
+    });
     showSnackBar(res, context);
   }
 
@@ -179,25 +185,30 @@ class _SignupScreenState extends State<SignupScreen> {
                         } else {
                           _passwordMatches = false;
                         }
-                        return TextButton(
-                          onPressed: _passwordMatches ? signUpUser : null,
-                          child: Container(
-                            child: const Text(
-                              "SignUp",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            width: double.infinity,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15.0)),
-                              ),
-                              color: Colors.blue,
-                            ),
-                          ),
-                        );
+                        return _isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : TextButton(
+                                onPressed: _passwordMatches ? signUpUser : null,
+                                child: Container(
+                                  child: const Text(
+                                    "SignUp",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  width: double.infinity,
+                                  alignment: Alignment.center,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  decoration: const ShapeDecoration(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(15.0)),
+                                    ),
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              );
                       },
                     ),
                   ],
