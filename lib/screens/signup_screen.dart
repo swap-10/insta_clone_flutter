@@ -48,6 +48,18 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
+  void signUpUser() async {
+    String res = await AuthMethods().signUpUser(
+      email: _emailAddressController.text,
+      username: _usernameController.text,
+      password: _passwordController.text,
+      file: _image!,
+    );
+    // print(res);
+
+    showSnackBar(res, context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,17 +180,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           _passwordMatches = false;
                         }
                         return TextButton(
-                          onPressed: _passwordMatches
-                              ? () async {
-                                  String res = await AuthMethods().signUpUser(
-                                    email: _emailAddressController.text,
-                                    username: _usernameController.text,
-                                    password: _passwordController.text,
-                                    file: _image!,
-                                  );
-                                  // print(res);
-                                }
-                              : null,
+                          onPressed: _passwordMatches ? signUpUser : null,
                           child: Container(
                             child: const Text(
                               "SignUp",
