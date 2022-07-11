@@ -1,10 +1,16 @@
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone_flutter/resources/auth_methods.dart';
 
 import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/widgets/text_field.dart';
+
+import '../utils/utils.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -22,6 +28,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
   final String _errorText = "Password doesn't match";
   String? _passedErrorText;
+  bool _passwordMatches = false;
+
+  Uint8List? _image;
 
   @override
   void dispose() {
@@ -30,6 +39,13 @@ class _SignupScreenState extends State<SignupScreen> {
     _usernameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+  }
+
+  void selectImage() async {
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = img;
+    });
   }
 
   @override
@@ -66,13 +82,15 @@ class _SignupScreenState extends State<SignupScreen> {
                               Center(
                                 child: CircleAvatar(
                                   radius: 32.0,
-                                  backgroundImage:
-                                      Image.asset('assets/usericon.png').image,
+                                  backgroundImage: _image != null
+                                      ? MemoryImage(_image!)
+                                      : Image.asset('assets/usericon.png')
+                                          .image,
                                 ),
                               ),
                               Positioned(
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () => selectImage(),
                                   icon: const Icon(Icons.add_a_photo_outlined),
                                   color: Colors.blue,
                                 ),
@@ -141,24 +159,44 @@ class _SignupScreenState extends State<SignupScreen> {
                       },
                     ),
                     // SignUp
-                    TextButton(
-                      onPressed: (() => {}),
-                      child: Container(
-                        child: const Text(
-                          "SignUp",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        decoration: const ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15.0)),
+                    ValueListenableBuilder(
+                      valueListenable: _confirmPasswordController,
+                      builder: (context, TextEditingValue value, _) {
+                        if (value == _passwordController.value) {
+                          _passwordMatches = true;
+                        } else {
+                          _passwordMatches = false;
+                        }
+                        return TextButton(
+                          onPressed: _passwordMatches
+                              ? () async {
+                                  String res = await AuthMethods().signUpUser(
+                                    email: _emailAddressController.text,
+                                    username: _usernameController.text,
+                                    password: _passwordController.text,
+                                    file: _image!,
+                                  );
+                                  // print(res);
+                                }
+                              : null,
+                          child: Container(
+                            child: const Text(
+                              "SignUp",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            decoration: const ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0)),
+                              ),
+                              color: Colors.blue,
+                            ),
                           ),
-                          color: Colors.blue,
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),
