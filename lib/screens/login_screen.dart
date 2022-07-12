@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailAddressController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  bool _isLoading = false;
   @override
   void dispose() {
     super.dispose();
@@ -25,10 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
     String res = await AuthMethods().loginUser(
       email: _emailAddressController.text,
       password: _passwordController.text,
     );
+    setState(() {
+      _isLoading = false;
+    });
     if (res == "Success!") {
       showSnackBar(res, Colors.green, context);
     } else {
@@ -84,24 +90,27 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 24.0,
               ),
-              TextButton(
-                onPressed: loginUser,
-                child: Container(
-                  child: const Text(
-                    "Log in",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15.0)),
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : TextButton(
+                      onPressed: loginUser,
+                      child: Container(
+                        child: const Text(
+                          "Log in",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        decoration: const ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.0)),
+                          ),
+                          color: Colors.blue,
+                        ),
+                      ),
                     ),
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
               Flexible(
                 child: Container(),
                 flex: 2,
