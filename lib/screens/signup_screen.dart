@@ -53,12 +53,17 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       _isLoading = true;
     });
-    String res = await AuthMethods().signUpUser(
-      email: _emailAddressController.text,
-      username: _usernameController.text,
-      password: _passwordController.text,
-      file: _image!,
-    );
+    String res = "An error occured";
+    if (_image != null) {
+      res = await AuthMethods().signUpUser(
+        email: _emailAddressController.text,
+        username: _usernameController.text,
+        password: _passwordController.text,
+        file: _image!,
+      );
+    } else {
+      res = "Please select profile picture";
+    }
     // print(res);
     setState(() {
       _isLoading = false;
