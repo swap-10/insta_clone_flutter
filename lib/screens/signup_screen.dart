@@ -63,7 +63,11 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       _isLoading = false;
     });
-    showSnackBar(res, context);
+    if (res == "Success!") {
+      showSnackBar(res, Colors.green, context);
+    } else {
+      showSnackBar(res, Colors.red, context);
+    }
   }
 
   @override

@@ -29,7 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
       email: _emailAddressController.text,
       password: _passwordController.text,
     );
-    showSnackBar(res, context);
+    if (res == "Success!") {
+      showSnackBar(res, Colors.green, context);
+    } else {
+      showSnackBar(res, Colors.red, context);
+    }
   }
 
   @override

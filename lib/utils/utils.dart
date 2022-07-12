@@ -10,10 +10,17 @@ pickImage(ImageSource source) async {
   }
 }
 
-showSnackBar(String content, BuildContext context) {
+showSnackBar(String content, Color color, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(content),
+      content: Text(
+        content,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      backgroundColor: color,
     ),
   );
 }

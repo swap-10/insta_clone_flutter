@@ -36,6 +36,8 @@ class AuthMethods {
         });
 
         res = "Success!";
+      } else {
+        res = "Please complete all the fields.";
       }
     } catch (err) {
       res = err.toString();
