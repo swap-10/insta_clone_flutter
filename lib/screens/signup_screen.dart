@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
+import 'package:insta_clone_flutter/screens/login_screen.dart';
 
 import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/widgets/text_field.dart';
@@ -73,6 +74,11 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       showSnackBar(res, Colors.red, context);
     }
+  }
+
+  void navigateToLogin() {
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   @override
@@ -235,7 +241,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           vertical: 8.0, horizontal: 1.0),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: navigateToLogin,
                       child: Container(
                         child: const Text(
                           "Login instead",
