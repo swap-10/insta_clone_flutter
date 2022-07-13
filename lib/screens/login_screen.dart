@@ -32,12 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
       email: _emailAddressController.text,
       password: _passwordController.text,
     );
-    setState(() {
-      _isLoading = false;
-    });
-    if (res == "Success!") {
-      showSnackBar(res, Colors.green, context);
-    } else {
+    if (res != "Success!") {
+      setState(() {
+        _isLoading = false;
+      });
       showSnackBar(res, Colors.red, context);
     }
   }
