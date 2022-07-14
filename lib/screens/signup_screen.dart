@@ -66,9 +66,7 @@ class _SignupScreenState extends State<SignupScreen> {
       res = "Please select profile picture";
     }
     // print(res);
-    if (res == "Success!") {
-      showSnackBar(res, Colors.green, context);
-    } else {
+    if (res != "Success!") {
       setState(() {
         _isLoading = false;
       });
