@@ -25,31 +25,38 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: InkWell(
-            child: const Icon(Icons.camera_alt_outlined),
-            onTap: () {
-              selectImage(ImageSource.camera);
-            },
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_image != null)
+            Expanded(
+              child: Image(image: Image.memory(_image!).image),
+              flex: 4,
+            ),
+          Expanded(
+            child: InkWell(
+              child: const Icon(Icons.camera_alt_outlined),
+              onTap: () {
+                selectImage(ImageSource.camera);
+              },
+            ),
           ),
-        ),
-        const Divider(
-          height: 16,
-          thickness: 4,
-        ),
-        Expanded(
-          child: InkWell(
-            child: const Icon(Icons.file_upload_outlined),
-            onTap: () {
-              selectImage(ImageSource.gallery);
-            },
+          const Divider(
+            height: 16,
+            thickness: 4,
           ),
-        ),
-      ],
+          Expanded(
+            child: InkWell(
+              child: const Icon(Icons.file_upload_outlined),
+              onTap: () {
+                selectImage(ImageSource.gallery);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
