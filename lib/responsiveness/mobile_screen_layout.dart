@@ -35,6 +35,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     });
   }
 
+  void onPageChanged(int index) {
+    setState(() {
+      _index = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +63,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           ),
         ],
         controller: pageController,
-        // onPageChanged: onPageChanged,
+        onPageChanged: onPageChanged,
+        physics: const NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: mobileBackgroundColor,
