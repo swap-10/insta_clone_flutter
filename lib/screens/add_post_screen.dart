@@ -23,6 +23,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
   }
 
+  dynamic removeImage() {
+    setState(() {
+      if (_image != null) {
+        _image = null;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -31,9 +39,30 @@ class _AddPostScreenState extends State<AddPostScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (_image != null)
+            InteractiveViewer(
+              child: Expanded(
+                child: Image(image: Image.memory(_image!).image),
+                flex: 5,
+              ),
+            ),
+          if (_image != null)
+            const Divider(
+              height: 16,
+              thickness: 4,
+            ),
+          if (_image != null)
             Expanded(
-              child: Image(image: Image.memory(_image!).image),
-              flex: 4,
+              child: InkWell(
+                child: const Icon(Icons.cancel_outlined),
+                onTap: () {
+                  removeImage();
+                },
+              ),
+            ),
+          if (_image != null)
+            const Divider(
+              height: 16,
+              thickness: 4,
             ),
           Expanded(
             child: InkWell(
