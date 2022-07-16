@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
 import 'package:insta_clone_flutter/utils/colors.dart';
+import 'package:insta_clone_flutter/utils/global_vars.dart';
 import 'package:provider/provider.dart';
 
 class MobileScreenLayout extends StatefulWidget {
@@ -45,23 +46,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-        children: const [
-          Center(
-            child: Text("Home"),
-          ),
-          Center(
-            child: Text("Explore"),
-          ),
-          Center(
-            child: Text("Post"),
-          ),
-          Center(
-            child: Text("Notifications"),
-          ),
-          Center(
-            child: Text("Profile"),
-          ),
-        ],
+        children: dashboardItems,
         controller: pageController,
         onPageChanged: onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
