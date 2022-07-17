@@ -39,11 +39,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (_image != null)
-            InteractiveViewer(
-              child: Expanded(
+            Expanded(
+              child: InteractiveViewer(
                 child: Image(image: Image.memory(_image!).image),
-                flex: 5,
               ),
+              flex: 5,
             ),
           if (_image != null)
             const Divider(
