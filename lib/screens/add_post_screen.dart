@@ -36,11 +36,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   dynamic postImage() {
     if (isLoading == true) {
+      showSnackBar("Please wait. Loading...", Colors.blue, context);
+      return;
+    }
+    if (_image == null) {
       return;
     }
     isLoading = true;
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const ConfirmPostPage()));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ConfirmPostPage(
+              image: _image!,
+            )));
     isLoading = false;
   }
 
@@ -130,13 +136,28 @@ class _AddPostScreenState extends State<AddPostScreen> {
 }
 
 class ConfirmPostPage extends StatelessWidget {
-  const ConfirmPostPage({Key? key}) : super(key: key);
+  final Uint8List image;
+  const ConfirmPostPage({
+    Key? key,
+    required this.image,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("Confirm Post"),
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            child: InteractiveViewer(
+                child: Image(
+              image: Image.memory(image).image,
+            )),
+          ),
+          const Center(
+            child: Text("Confirm Post"),
+          ),
+        ],
       ),
     );
   }
