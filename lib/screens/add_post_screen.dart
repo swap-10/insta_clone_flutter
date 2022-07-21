@@ -13,6 +13,7 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _image;
+  bool isLoading = false;
 
   dynamic selectImage(source) async {
     Uint8List? image = await pickImage(source);
@@ -24,11 +25,23 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   dynamic removeImage() {
+    isLoading = true;
     setState(() {
       if (_image != null) {
         _image = null;
       }
     });
+    isLoading = false;
+  }
+
+  dynamic postImage() {
+    if (isLoading == true) {
+      return;
+    }
+    isLoading = true;
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const ConfirmPostPage()));
+    isLoading = false;
   }
 
   @override
@@ -38,6 +51,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (isLoading == true)
+            const LinearProgressIndicator(
+              color: Colors.blue,
+            ),
           if (_image != null)
             Expanded(
               child: InteractiveViewer(
@@ -52,11 +69,33 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
           if (_image != null)
             Expanded(
-              child: InkWell(
-                child: const Icon(Icons.cancel_outlined),
-                onTap: () {
-                  removeImage();
-                },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      hoverColor: Colors.red,
+                      child: const Icon(Icons.cancel_outlined),
+                      onTap: () {
+                        removeImage();
+                      },
+                    ),
+                  ),
+                  const VerticalDivider(
+                    width: 16,
+                    thickness: 4,
+                  ),
+                  Expanded(
+                    child: InkWell(
+                      hoverColor: Colors.green,
+                      child: const Icon(Icons.check_circle_outline),
+                      onTap: () {
+                        postImage();
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           if (_image != null)
@@ -85,6 +124,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ConfirmPostPage extends StatelessWidget {
+  const ConfirmPostPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text("Confirm Post"),
       ),
     );
   }
