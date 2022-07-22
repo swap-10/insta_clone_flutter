@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/utils/utils.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
     isLoading = true;
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ConfirmPostPage(
+        builder: (context) => ConfirmPostScreen(
               image: _image!,
             )));
     isLoading = false;
@@ -63,8 +64,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
           if (_image != null)
             Expanded(
-              child: InteractiveViewer(
-                child: Image(image: Image.memory(_image!).image),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InteractiveViewer(
+                  child: Image(image: Image.memory(_image!).image),
+                ),
               ),
               flex: 5,
             ),
@@ -135,27 +139,63 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 }
 
-class ConfirmPostPage extends StatelessWidget {
+class ConfirmPostScreen extends StatefulWidget {
   final Uint8List image;
-  const ConfirmPostPage({
+
+  const ConfirmPostScreen({
     Key? key,
     required this.image,
   }) : super(key: key);
 
   @override
+  State<ConfirmPostScreen> createState() => _ConfirmPostScreenState();
+}
+
+class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
+  final TextEditingController _descriptionController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: mobileBackgroundColor,
+        title: const Text("New Post"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => (Navigator.of(context).pop()),
+        ),
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-            child: InteractiveViewer(
-                child: Image(
-              image: Image.memory(image).image,
-            )),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InteractiveViewer(
+                  child: Image(
+                image: Image.memory(widget.image).image,
+              )),
+            ),
           ),
-          const Center(
-            child: Text("Confirm Post"),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: _descriptionController,
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  label: const Text("Caption"),
+                  hintText: "Add caption",
+                  border: OutlineInputBorder(
+                    borderSide: Divider.createBorderSide(context),
+                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                  ),
+                ),
+                minLines: null,
+                maxLines: null,
+              ),
+            ),
           ),
         ],
       ),
