@@ -165,6 +165,15 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => (Navigator.of(context).pop()),
         ),
+        actions: [
+          InkWell(
+            child: const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(child: Text("Post")),
+            ),
+            onTap: () {},
+          )
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
