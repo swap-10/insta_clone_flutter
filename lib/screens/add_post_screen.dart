@@ -2,8 +2,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone_flutter/resources/auth_methods.dart';
 import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/utils/utils.dart';
+
+import 'package:insta_clone_flutter/models/user.dart' as user_model;
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({Key? key}) : super(key: key);
@@ -153,6 +156,25 @@ class ConfirmPostScreen extends StatefulWidget {
 
 class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
   final TextEditingController _descriptionController = TextEditingController();
+  late AuthMethods authMethods = AuthMethods();
+  user_model.UserInfo? userinfo;
+  bool isDPLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserInfo();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void loadUserInfo() async {
+    userinfo = await authMethods.getUserInfo();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,38 +197,59 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
           )
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InteractiveViewer(
-                  child: Image(
-                image: Image.memory(widget.image).image,
-              )),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: _descriptionController,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  label: const Text("Caption"),
-                  hintText: "Add caption",
-                  border: OutlineInputBorder(
-                    borderSide: Divider.createBorderSide(context),
-                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            if (userinfo != null)
+              Row(
+                children: [
+                  CircleAvatar(
+                    child: Image(image: NetworkImage(userinfo!.dpURL)),
                   ),
-                ),
-                minLines: null,
-                maxLines: null,
+                  const Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
+                  Text(
+                    userinfo!.username,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
+              ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InteractiveViewer(
+                    child: Image(
+                  image: Image.memory(widget.image).image,
+                )),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  controller: _descriptionController,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    label: const Text("Caption"),
+                    hintText: "Add caption",
+                    border: OutlineInputBorder(
+                      borderSide: Divider.createBorderSide(context),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(15.0)),
+                    ),
+                  ),
+                  minLines: null,
+                  maxLines: null,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
