@@ -2,11 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone_flutter/providers/user_provider.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
+import 'package:insta_clone_flutter/resources/firestore_methods.dart';
 import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/utils/utils.dart';
 
 import 'package:insta_clone_flutter/models/user.dart' as user_model;
+import 'package:provider/provider.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({Key? key}) : super(key: key);
@@ -157,13 +160,11 @@ class ConfirmPostScreen extends StatefulWidget {
 class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   late AuthMethods authMethods = AuthMethods();
-  user_model.UserInfo? userinfo;
   bool isDPLoading = true;
 
   @override
   void initState() {
     super.initState();
-    loadUserInfo();
   }
 
   @override
@@ -171,13 +172,29 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
     super.dispose();
   }
 
-  void loadUserInfo() async {
-    userinfo = await authMethods.getUserInfo();
-    setState(() {});
+  void makePost(
+    String uid,
+  ) async {
+    String res = "An error occured";
+    try {
+      res = await FirestoreMethods()
+          .uploadPost(uid, _descriptionController.text, widget.image);
+
+      if (res == "Success!") {
+        showSnackBar("Successfully Posted!", Colors.green, context);
+      } else {
+        showSnackBar(res, Colors.red, context);
+      }
+    } catch (err) {
+      res = err.toString();
+      showSnackBar(res, Colors.red, context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final user_model.UserInfo userInfo =
+        Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -193,7 +210,7 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
               padding: EdgeInsets.all(16.0),
               child: Center(child: Text("Post")),
             ),
-            onTap: () {},
+            onTap: () => makePost(userInfo.uid),
           )
         ],
       ),
@@ -202,23 +219,22 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            if (userinfo != null)
-              Row(
-                children: [
-                  CircleAvatar(
-                    child: Image(image: NetworkImage(userinfo!.dpURL)),
+            Row(
+              children: [
+                CircleAvatar(
+                  child: Image(image: NetworkImage(userInfo.dpURL)),
+                ),
+                const Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
+                Text(
+                  userInfo.username,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
                   ),
-                  const Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
-                  Text(
-                    userinfo!.username,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
