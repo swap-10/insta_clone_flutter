@@ -8,6 +8,7 @@ class UserInfo {
   final String bio;
   final List followers;
   final List following;
+  final List postIDs;
 
   const UserInfo({
     required this.email,
@@ -17,6 +18,7 @@ class UserInfo {
     required this.bio,
     required this.followers,
     required this.following,
+    required this.postIDs,
   });
 
   Map<String, dynamic> toJSON() {
@@ -28,6 +30,7 @@ class UserInfo {
       "bio": bio,
       "followers": followers,
       "following": following,
+      "postIDs": postIDs,
     };
   }
 
@@ -42,6 +45,7 @@ class UserInfo {
       bio: snapshot['bio'],
       followers: snapshot['followers'],
       following: snapshot['following'],
+      postIDs: snapshot['postIDs'],
     );
   }
 }
