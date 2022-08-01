@@ -161,6 +161,7 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   late AuthMethods authMethods = AuthMethods();
   bool isDPLoading = true;
+  bool isPosting = false;
 
   @override
   void initState() {
@@ -177,6 +178,9 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
   ) async {
     String res = "An error occured";
     try {
+      setState(() {
+        isPosting = true;
+      });
       res = await FirestoreMethods()
           .uploadPost(uid, _descriptionController.text, widget.image);
 
@@ -189,6 +193,9 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
       res = err.toString();
       showSnackBar(res, Colors.red, context);
     }
+    setState(() {
+      isPosting = false;
+    });
   }
 
   @override
@@ -219,6 +226,7 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            if (isPosting) const LinearProgressIndicator(),
             Row(
               children: [
                 CircleAvatar(
