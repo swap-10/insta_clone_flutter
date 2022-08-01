@@ -7,7 +7,9 @@ import 'package:insta_clone_flutter/utils/global_vars.dart';
 import 'package:provider/provider.dart';
 
 class MobileScreenLayout extends StatefulWidget {
-  const MobileScreenLayout({Key? key}) : super(key: key);
+  final int? index;
+  const MobileScreenLayout({Key? key, this.index}) : super(key: key);
+  MobileScreenLayout get _index => MobileScreenLayout(index: index!);
 
   @override
   State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
@@ -21,6 +23,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   void initState() {
     super.initState();
     pageController = PageController();
+    if (widget.index != null) {
+      _index = widget.index!;
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        if (pageController.hasClients) {
+          onSelectNavigationItem(_index);
+        }
+      });
+    }
   }
 
   @override
