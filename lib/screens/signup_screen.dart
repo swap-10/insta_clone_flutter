@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
+import 'package:insta_clone_flutter/responsiveness/mobile_screen_layout.dart';
+import 'package:insta_clone_flutter/responsiveness/responsive_screen_layout.dart';
+import 'package:insta_clone_flutter/responsiveness/web_screen_layout.dart';
 import 'package:insta_clone_flutter/screens/login_screen.dart';
 
 import 'package:insta_clone_flutter/utils/colors.dart';
@@ -62,6 +65,13 @@ class _SignupScreenState extends State<SignupScreen> {
         password: _passwordController.text,
         file: _image!,
       );
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return const ResponsiveLayout(
+          webScreenLayout: WebScreenLayout(),
+          mobileScreenLayout: MobileScreenLayout(),
+        );
+      }));
     } else {
       res = "Please select profile picture";
     }
