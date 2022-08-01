@@ -41,36 +41,151 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    userInfo.username,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.normal,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      userInfo.username,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
+                      ),
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
+                  onPressed: navigateToAddPost,
+                ),
+                Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    icon: const Icon(Icons.menu),
+                  );
+                })
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 32.0, 0.0),
+                  child: CircleAvatar(
+                    radius: 50.0,
+                    child: ClipOval(
+                      child: Image.network(
+                        userInfo.dpURL,
+                        width: 120,
+                        height: 100,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          userInfo.postIDs.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        "Posts",
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          userInfo.followers.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        "Followers",
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          userInfo.following.length.toString(),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        "Following",
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(32.0, 8.0, 16.0, 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    userInfo.username,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline),
-                onPressed: navigateToAddPost,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    userInfo.bio,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
               ),
-              Builder(builder: (context) {
-                return IconButton(
-                  onPressed: () => Scaffold.of(context).openEndDrawer(),
-                  icon: const Icon(Icons.menu),
-                );
-              })
-            ],
-          )
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
