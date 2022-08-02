@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone_flutter/models/user.dart' as user_model;
 import 'package:insta_clone_flutter/providers/user_provider.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
+import 'package:insta_clone_flutter/resources/firestore_methods.dart';
 import 'package:insta_clone_flutter/responsiveness/mobile_screen_layout.dart';
 import 'package:insta_clone_flutter/screens/add_post_screen.dart';
 import 'package:insta_clone_flutter/utils/colors.dart';
@@ -24,6 +25,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context) => const MobileScreenLayout(
               index: 2,
             )));
+  }
+
+  @override
+  void initState() {
+    setState(() {});
   }
 
   @override
@@ -224,6 +230,8 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   Uint8List? _image;
+  final TextEditingController? _usernameController = TextEditingController();
+  final TextEditingController? _bioController = TextEditingController();
   void selectImage() async {
     Uint8List img = await pickImage(ImageSource.gallery);
     setState(() {
@@ -231,46 +239,90 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
+  void saveProfileChanges() async {
+    String res = await FirestoreMethods().updateUserProfile(
+      widget.userInfo.uid,
+      _image,
+      _usernameController!.text,
+      _bioController!.text,
+    );
+    if (res == "Success!") {
+      showSnackBar("Successfully updated", Colors.green, context);
+    } else {
+      showSnackBar(res, Colors.red, context);
+    }
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _usernameController!.text = widget.userInfo.username;
+    _bioController!.text = widget.userInfo.bio;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text("Edit Profile"),
-      ),
-      body: SizedBox.expand(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 50.0,
-                  child: ClipOval(
-                    child: _image == null
-                        ? Image.network(
-                            widget.userInfo.dpURL,
-                            width: 120,
-                            height: 100,
-                          )
-                        : Image.memory(_image!),
-                  ),
-                ),
-                Positioned(
-                  child: IconButton(
-                    icon: const Icon(Icons.camera_alt_outlined),
-                    onPressed: selectImage,
-                  ),
-                  bottom: -2.0,
-                  right: -10.0,
-                ),
-              ],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 8.0, 0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.check,
+                color: Colors.blue,
+              ),
+              onPressed: () => saveProfileChanges(),
             ),
-          ],
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SizedBox.expand(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 50.0,
+                    child: ClipOval(
+                      child: _image == null
+                          ? Image.network(
+                              widget.userInfo.dpURL,
+                              width: 120,
+                              height: 100,
+                            )
+                          : Image.memory(_image!),
+                    ),
+                  ),
+                  Positioned(
+                    child: IconButton(
+                      icon: const Icon(Icons.camera_alt_outlined),
+                      onPressed: selectImage,
+                    ),
+                    bottom: -2.0,
+                    right: -10.0,
+                  ),
+                ],
+              ),
+              TextField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: "username",
+                ),
+              ),
+              TextField(
+                controller: _bioController,
+                decoration: const InputDecoration(
+                  labelText: "bio",
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

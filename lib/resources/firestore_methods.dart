@@ -62,4 +62,26 @@ class FirestoreMethods {
 
     return res;
   }
+
+  Future<String> updateUserProfile(
+      String uid, Uint8List? image, String username, String bio) async {
+    String res = "Something went wrong";
+    try {
+      if (image != null) {
+        String dpURL = await StorageMethods()
+            .uploadImageToStorage("ProfilePictures", image, false);
+        _firestore.collection('users').doc(uid).update({"dpURL": dpURL});
+        print("DP Updated");
+      }
+
+      _firestore.collection('users').doc(uid).update({"username": username});
+      _firestore.collection('users').doc(uid).update({"bio": bio});
+
+      res = "Success!";
+    } catch (err) {
+      res = err.toString();
+    }
+
+    return res;
+  }
 }
