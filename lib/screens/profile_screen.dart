@@ -28,14 +28,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  void initState() {
-    setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final user_model.UserInfo userInfo =
-        Provider.of<UserProvider>(context).getUser;
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    final user_model.UserInfo userInfo = _userProvider.getUser;
+    setState(() {
+      _userProvider.refreshUser();
+    });
     return Scaffold(
       endDrawer: Drawer(
         backgroundColor: mobileBackgroundColor,
@@ -200,12 +198,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              EditProfileScreen(userInfo: userInfo),
-                        ),
-                      ),
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditProfileScreen(userInfo: userInfo),
+                          ),
+                        );
+                        setState(() {
+                          _userProvider.refreshUser();
+                        });
+                      },
                       icon: const Icon(Icons.edit),
                       label: const Text("Edit Profile"),
                     ),
