@@ -16,10 +16,10 @@ class FirestoreMethods {
   ) async {
     String res = "An error occured!";
     try {
-      String photoURL =
-          await StorageMethods().uploadImageToStorage("Posts", file, true);
-
       String postID = const Uuid().v1();
+      String photoURL = await StorageMethods()
+          .uploadImageToStorage("Posts", file, true, postID);
+
       Post post = Post(
         uid: uid,
         description: description,
@@ -69,7 +69,7 @@ class FirestoreMethods {
     try {
       if (image != null) {
         String dpURL = await StorageMethods()
-            .uploadImageToStorage("ProfilePictures", image, false);
+            .uploadImageToStorage("ProfilePicture", image, false);
         _firestore.collection('users').doc(uid).update({"dpURL": dpURL});
         print("DP Updated");
       }

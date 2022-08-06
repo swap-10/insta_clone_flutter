@@ -13,11 +13,12 @@ class StorageMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String> uploadImageToStorage(
-      String childName, Uint8List file, bool isPost) async {
+      String childName, Uint8List file, bool isPost,
+      [String? postID]) async {
     Reference ref =
         _storage.ref().child(childName).child(_auth.currentUser!.uid);
     if (isPost) {
-      String id = const Uuid().v1();
+      String id = postID!;
       ref = ref.child(id);
     }
 
