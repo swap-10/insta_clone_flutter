@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone_flutter/providers/user_provider.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
 import 'package:insta_clone_flutter/resources/firestore_methods.dart';
+import 'package:insta_clone_flutter/responsiveness/mobile_screen_layout.dart';
+import 'package:insta_clone_flutter/screens/profile_screen.dart';
 import 'package:insta_clone_flutter/utils/colors.dart';
 import 'package:insta_clone_flutter/utils/utils.dart';
 
@@ -173,6 +175,13 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
     super.dispose();
   }
 
+  void navigateToProfileScreen() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const MobileScreenLayout(
+              index: 4,
+            )));
+  }
+
   void makePost(
     String uid,
   ) async {
@@ -186,6 +195,7 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
 
       if (res == "Success!") {
         showSnackBar("Successfully Posted!", Colors.green, context);
+        navigateToProfileScreen();
       } else {
         showSnackBar(res, Colors.red, context);
       }
