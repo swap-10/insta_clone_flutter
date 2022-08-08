@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> downloadImages(List? imageReferences) async {
     for (Reference item in imageReferences!) {
-      readyImages.add(await item.getData());
+      readyImages.add(await item.getDownloadURL());
     }
   }
 
@@ -266,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         itemBuilder: (BuildContext context, int idx) {
                           return GridTile(
                             child: Image(
-                              image: MemoryImage(readyImages[idx]),
+                              image: NetworkImage(readyImages[idx]),
                             ),
                           );
                         },
