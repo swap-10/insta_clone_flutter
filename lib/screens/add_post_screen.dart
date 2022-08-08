@@ -195,17 +195,23 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
 
       if (res == "Success!") {
         showSnackBar("Successfully Posted!", Colors.green, context);
+        setState(() {
+          isPosting = false;
+        });
         navigateToProfileScreen();
       } else {
         showSnackBar(res, Colors.red, context);
+        setState(() {
+          isPosting = false;
+        });
       }
     } catch (err) {
       res = err.toString();
       showSnackBar(res, Colors.red, context);
+      setState(() {
+        isPosting = false;
+      });
     }
-    setState(() {
-      isPosting = false;
-    });
   }
 
   @override
