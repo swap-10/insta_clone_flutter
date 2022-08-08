@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone_flutter/models/user.dart' as user_model;
@@ -20,6 +22,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  List imageReferences = [];
+  List readyImages = [];
+  late UserProvider _userProvider;
+  late user_model.UserInfo userInfo;
   void navigateToAddPost() {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const MobileScreenLayout(
@@ -28,9 +34,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _userProvider = Provider.of(context, listen: false);
+    userInfo = _userProvider.getUser;
+    String uid = userInfo.uid;
+    Reference ref = FirebaseStorage.instance.ref().child('Posts').child(uid);
+    getImages(ref);
+  }
+
+  void getImages(Reference ref) async {
+    ListResult listOfImages = await ref.list();
+    List listFinal = listOfImages.items;
+    setState(() {
+      imageReferences = listFinal;
+    });
+    await downloadImages(imageReferences);
+    setState(() {});
+  }
+
+  Future<void> downloadImages(List? imageReferences) async {
+    for (Reference item in imageReferences!) {
+      readyImages.add(await item.getData());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    UserProvider _userProvider = Provider.of(context, listen: false);
-    final user_model.UserInfo userInfo = _userProvider.getUser;
     setState(() {
       _userProvider.refreshUser();
     });
@@ -216,6 +246,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+            const Divider(
+              height: 16.0,
+              thickness: 4.0,
+            ),
+            if (imageReferences.isNotEmpty)
+              readyImages.isNotEmpty
+                  ? Expanded(
+                      child: GridView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: imageReferences.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 1.0,
+                          crossAxisSpacing: 5.0,
+                          mainAxisSpacing: 5.0,
+                        ),
+                        itemBuilder: (BuildContext context, int idx) {
+                          return GridTile(
+                            child: Image(
+                              image: MemoryImage(readyImages[idx]),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : const CircularProgressIndicator()
+            else
+              const CircularProgressIndicator(),
           ],
         ),
       ),
