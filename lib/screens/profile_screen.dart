@@ -22,7 +22,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  List imageReferences = [];
   List readyImages = [];
   late UserProvider _userProvider;
   late user_model.UserInfo userInfo;
@@ -44,12 +43,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void getImages(Reference ref) async {
-    ListResult listOfImages = await ref.list();
-    List listFinal = listOfImages.items;
-    setState(() {
-      imageReferences = listFinal;
-    });
-    await downloadImages(imageReferences);
+    List postIDList = userInfo.postIDs;
+    List imageReferenceList = [];
+    for (String postID in postIDList.reversed) {
+      imageReferenceList.add(ref.child(postID));
+    }
+    setState(() {});
+    await downloadImages(imageReferenceList);
     setState(() {});
   }
 
@@ -61,9 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      _userProvider.refreshUser();
-    });
+    _userProvider.refreshUser();
     return Scaffold(
       endDrawer: Drawer(
         backgroundColor: mobileBackgroundColor,
@@ -250,31 +248,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 16.0,
               thickness: 4.0,
             ),
-            if (imageReferences.isNotEmpty)
-              readyImages.isNotEmpty
-                  ? Expanded(
-                      child: GridView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: imageReferences.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 1.0,
-                          crossAxisSpacing: 5.0,
-                          mainAxisSpacing: 5.0,
-                        ),
-                        itemBuilder: (BuildContext context, int idx) {
-                          return GridTile(
-                            child: Image(
-                              image: NetworkImage(readyImages[idx]),
-                            ),
-                          );
-                        },
+            readyImages.isNotEmpty
+                ? Expanded(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      itemCount: readyImages.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.0,
+                        crossAxisSpacing: 5.0,
+                        mainAxisSpacing: 5.0,
                       ),
-                    )
-                  : const CircularProgressIndicator()
-            else
-              const CircularProgressIndicator(),
+                      itemBuilder: (BuildContext context, int idx) {
+                        return GridTile(
+                          child: Image(
+                            image: NetworkImage(readyImages[idx]),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : const CircularProgressIndicator()
           ],
         ),
       ),
