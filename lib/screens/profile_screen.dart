@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,34 +24,47 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   List readyImages = [];
-  late UserProvider _userProvider;
-  late user_model.UserInfo userInfo;
+  UserProvider? _userProvider;
+  user_model.UserInfo? userInfo;
   void navigateToAddPost() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
         builder: (context) => const MobileScreenLayout(
-              index: 2,
-            )));
+          index: 2,
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
     _userProvider = Provider.of(context, listen: false);
-    userInfo = _userProvider.getUser;
-    String uid = userInfo.uid;
+    getUserData();
+  }
+
+  void getUserData() async {
+    await _userProvider!.refreshUser().then((value) => whenInfoReady());
+  }
+
+  void whenInfoReady() {
+    userInfo = _userProvider!.getUser;
+    String uid = userInfo!.uid;
     Reference ref = FirebaseStorage.instance.ref().child('Posts').child(uid);
     getImages(ref);
   }
 
   void getImages(Reference ref) async {
-    List postIDList = userInfo.postIDs;
+    List postIDList = userInfo!.postIDs;
     List imageReferenceList = [];
     for (String postID in postIDList.reversed) {
       imageReferenceList.add(ref.child(postID));
     }
     setState(() {});
     await downloadImages(imageReferenceList);
-    setState(() {});
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> downloadImages(List? imageReferences) async {
@@ -61,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _userProvider.refreshUser();
+    _userProvider!.refreshUser();
     return Scaffold(
       endDrawer: Drawer(
         backgroundColor: mobileBackgroundColor,
@@ -79,199 +93,204 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      userInfo.username,
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: navigateToAddPost,
-                ),
-                Builder(builder: (context) {
-                  return IconButton(
-                    onPressed: () => Scaffold.of(context).openEndDrawer(),
-                    icon: const Icon(Icons.menu),
-                  );
-                })
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 32.0, 0.0),
-                  child: CircleAvatar(
-                    radius: 50.0,
-                    child: ClipOval(
-                      child: Image.network(
-                        userInfo.dpURL,
-                        width: 120,
-                        height: 100,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
+        child: userInfo == null
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  Row(
                     children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          userInfo.postIDs.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            userInfo!.username,
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.normal,
+                            ),
                           ),
                         ),
                       ),
-                      const Text(
-                        "Posts",
-                        style: TextStyle(fontSize: 12.0),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline),
+                        onPressed: navigateToAddPost,
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          userInfo.followers.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        "Followers",
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          userInfo.following.length.toString(),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        "Following",
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(32.0, 8.0, 16.0, 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    userInfo.username,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    userInfo.bio,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditProfileScreen(userInfo: userInfo),
-                          ),
+                      Builder(builder: (context) {
+                        return IconButton(
+                          onPressed: () => Scaffold.of(context).openEndDrawer(),
+                          icon: const Icon(Icons.menu),
                         );
-                        setState(() {
-                          _userProvider.refreshUser();
-                        });
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: const Text("Edit Profile"),
+                      })
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(16.0, 16.0, 32.0, 0.0),
+                        child: CircleAvatar(
+                          radius: 50.0,
+                          child: ClipOval(
+                            child: Image.network(
+                              userInfo!.dpURL,
+                              width: 120,
+                              height: 100,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                userInfo!.postIDs.length.toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              "Posts",
+                              style: TextStyle(fontSize: 12.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                userInfo!.followers.length.toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              "Followers",
+                              style: TextStyle(fontSize: 12.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                userInfo!.following.length.toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              "Following",
+                              style: TextStyle(fontSize: 12.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 8.0, 16.0, 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          userInfo!.username,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          userInfo!.bio,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProfileScreen(userInfo: userInfo!),
+                                ),
+                              );
+                              setState(() {
+                                _userProvider!.refreshUser();
+                              });
+                            },
+                            icon: const Icon(Icons.edit),
+                            label: const Text("Edit Profile"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    height: 16.0,
+                    thickness: 4.0,
+                  ),
+                  readyImages.isNotEmpty
+                      ? Expanded(
+                          child: GridView.builder(
+                            padding: const EdgeInsets.all(8.0),
+                            itemCount: readyImages.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 1.0,
+                              crossAxisSpacing: 5.0,
+                              mainAxisSpacing: 5.0,
+                            ),
+                            itemBuilder: (BuildContext context, int idx) {
+                              return GridTile(
+                                child: Image(
+                                  image: NetworkImage(readyImages[idx]),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : const CircularProgressIndicator()
                 ],
               ),
-            ),
-            const Divider(
-              height: 16.0,
-              thickness: 4.0,
-            ),
-            readyImages.isNotEmpty
-                ? Expanded(
-                    child: GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      itemCount: readyImages.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 1.0,
-                        crossAxisSpacing: 5.0,
-                        mainAxisSpacing: 5.0,
-                      ),
-                      itemBuilder: (BuildContext context, int idx) {
-                        return GridTile(
-                          child: Image(
-                            image: NetworkImage(readyImages[idx]),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : const CircularProgressIndicator()
-          ],
-        ),
       ),
     );
   }

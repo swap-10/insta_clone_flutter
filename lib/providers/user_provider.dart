@@ -8,8 +8,8 @@ class UserProvider with ChangeNotifier {
   UserInfo get getUser => _userInfo!;
 
   Future<void> refreshUser() async {
-    UserInfo userInfo = await _authMethods.getUserInfo();
-    _userInfo = userInfo;
+    UserInfo userInfo =
+        await _authMethods.getUserInfo().then((value) => (_userInfo = value));
     notifyListeners();
   }
 }
