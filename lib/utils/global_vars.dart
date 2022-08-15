@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:insta_clone_flutter/resources/auth_methods.dart';
 import 'package:insta_clone_flutter/screens/add_post_screen.dart';
+import 'package:insta_clone_flutter/screens/home_screen.dart';
 import 'package:insta_clone_flutter/screens/profile_screen.dart';
 
 const webScreenSize = 600;
 
 final dashboardItems = [
-  Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      const Text("Homiiie"),
-      TextButton(
-        onPressed: AuthMethods().signOutUser,
-        child: const Text("Log out"),
-      ),
-    ],
-  ),
+  const HomeScreen(),
   const Center(
     child: Text("Explore"),
   ),
