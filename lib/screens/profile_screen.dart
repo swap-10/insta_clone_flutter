@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     setState(() {});
     await downloadImages(imageReferenceList);
-    if (this.mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -134,13 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const EdgeInsets.fromLTRB(16.0, 16.0, 32.0, 0.0),
                         child: CircleAvatar(
                           radius: 50.0,
-                          child: ClipOval(
-                            child: Image.network(
-                              userInfo!.dpURL,
-                              width: 120,
-                              height: 100,
-                            ),
-                          ),
+                          backgroundImage: Image.network(userInfo!.dpURL).image,
                         ),
                       ),
                       Padding(

@@ -246,7 +246,7 @@ class _ConfirmPostScreenState extends State<ConfirmPostScreen> {
             Row(
               children: [
                 CircleAvatar(
-                  child: Image(image: NetworkImage(userInfo.dpURL)),
+                  backgroundImage: Image.network(userInfo.dpURL).image,
                 ),
                 const Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
                 Text(
