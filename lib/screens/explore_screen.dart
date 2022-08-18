@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:insta_clone_flutter/models/user.dart' as user_model;
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -68,6 +70,23 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
+  QuerySnapshot? snapshot;
+  List<QueryDocumentSnapshot>? docs;
+
+  void getSearchList(String searchControllerText) async {
+    setState(() {});
+    snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('username',
+            isGreaterThanOrEqualTo: searchController.text,
+            isLessThanOrEqualTo: searchController.text + "\uf7ff")
+        .get();
+
+    docs = snapshot!.docs;
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   void backToExploreScreen() {
     Navigator.of(context).pop();
@@ -89,6 +108,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 Expanded(
                   child: TextField(
                     controller: searchController,
+                    onChanged: (searchControllerText) =>
+                        getSearchList(searchController.text),
                     decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color.fromARGB(255, 26, 25, 25),
@@ -105,9 +126,33 @@ class _SearchScreenState extends State<SearchScreen> {
                 )
               ],
             ),
-            Expanded(
-              child: Container(),
-            ),
+            searchController.text.isEmpty
+                ? Expanded(
+                    child: Container(),
+                  )
+                : snapshot == null
+                    ? const CircularProgressIndicator()
+                    : docs == null
+                        ? const CircularProgressIndicator()
+                        : Expanded(
+                            child: ListView.builder(
+                              itemBuilder: (BuildContext context, int idx) {
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: Image.network(
+                                            user_model.UserInfo.fromSnap(
+                                                    docs![idx])
+                                                .dpURL)
+                                        .image,
+                                  ),
+                                  title: Text(
+                                      user_model.UserInfo.fromSnap(docs![idx])
+                                          .username),
+                                );
+                              },
+                              itemCount: docs!.length,
+                            ),
+                          ),
           ],
         ),
       ),
