@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_clone_flutter/models/user.dart' as user_model;
+import 'package:insta_clone_flutter/screens/view_profile_screen.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -88,6 +89,11 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  void openUserProfile(String uid) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ViewProfileScreen(uid: uid)));
+  }
+
   void backToExploreScreen() {
     Navigator.of(context).pop();
   }
@@ -138,6 +144,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: ListView.builder(
                               itemBuilder: (BuildContext context, int idx) {
                                 return ListTile(
+                                  onTap: () => openUserProfile(
+                                      user_model.UserInfo.fromSnap(docs![idx])
+                                          .uid),
                                   leading: CircleAvatar(
                                     backgroundImage: Image.network(
                                             user_model.UserInfo.fromSnap(
